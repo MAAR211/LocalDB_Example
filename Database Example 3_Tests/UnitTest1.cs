@@ -1,8 +1,11 @@
+using Database_Example_3.HelloWorldDB;
 using Database_Example_3.Models;
 using DependencyInjectionExample;
 
 using FakeItEasy;
 using FakeItEasy.Sdk;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Depencency_Injection_1_Tests
 
@@ -147,6 +150,118 @@ namespace Depencency_Injection_1_Tests
             }
 
         }
+
+
+
+
+
+        [TestFixture]
+        public class HelloWorldBLTests
+        {
+            [Test]
+            public void AddJobseeker_ValidPerson_SuccessfullyAdds()
+            {
+
+
+                var jobseeker = new Persons
+                {
+                    FirstName = "Lika",
+                    LastName = "Gelovani",
+                    Address = "123 Qavtaradze st",
+                    City = "Tbilisi"
+                };
+
+
+                //IHelloWorldDAL - interfeisis fake -is sheqmna
+                //HelloWorldBL  damokidebulia IHelloWorldDAL interfeisze, amitom amis fake-is sheqmnaa sachiro
+                var hwDAL = A.Fake<IHelloWorldDAL>();
+
+
+
+                //GetMaxPersonID- metodis fake iqmneba da vutiteb rom 0 daabrunos -MaxPersonID
+                A.CallTo(() => hwDAL.GetMaxPersonID()).Returns(0);
+
+
+                //GetJobseekerByID -  metodis fake iqmneba da null unda daabrunos 
+                //igulisxmeba rom shesamabisi jobseeker ar unda moidzebnos rom axali chaweros
+                //  A<int>._ an  A<int>.Ignored -   aq igulisxmeba rom nebismieri parametri sheidzleba hqondes GetJobseekerByID metods da null unda daabrunos mainc
+                A.CallTo(() => hwDAL.GetJobseekerByID(A<int>._)).Returns(null);
+
+
+                // AddJobseeker metodis fake implementacia
+                //igive jobseeker unda daabrunos rac gadaeca
+                //amowmebs rom AddJobseeker metodi sworad mushaobs da swor mnishvnelobas abrunebs
+                A.CallTo(() => hwDAL.AddJobseeker(jobseeker)).Returns(jobseeker);
+
+
+                //HelloWorldBL klasis obieqts vqmni romelsac fake hwDAL cvlads gadavcem
+                //HelloWorldBL klasis shemowmeba minda IHelloWorldDAL interfeisisgan damoukideblad
+                var hwBL = new HelloWorldBL(hwDAL);
+
+                //HelloWorldBL klasis AddJobseeker metodis gamodzaxeba jobseeker parametrit
+                var result = hwBL.AddJobseeker(jobseeker);
+
+
+                //amowmebs rom GetMaxPersonID metodis gamodzaxeba ertxel mainc moxda hwDAL fake obieqtistvis
+                //AddJobseeker metodi rom sworad mushaobs amas amowmebs da aseve unikaluri ID rom hqondes jobseekers
+                A.CallTo(() => hwDAL.GetMaxPersonID()).MustHaveHappened();
+
+
+                //amowmebs rom GetJobseekerByID metodis gamodzaxeba ertxel mainc moxda hwDAL fake obieqtistvis - swori argumentit
+                //AddJobseeker metodi rom ar mushaobdes sworad GetJobseekerByID metodi ar daabrunebs mosalodnel jobseeker -is obieqts
+                A.CallTo(() => hwDAL.GetJobseekerByID(jobseeker.PersonID)).MustHaveHappened();
+
+
+                //amowmebs rom AddJobseeker metodis gamodzaxeba ertxel mainc moxda hwDAL fake obieqtistvis
+                A.CallTo(() => hwDAL.AddJobseeker(jobseeker)).MustHaveHappened();
+
+                //amowmebs rom AddJobseekeris metodis mier dabrunebuli jobseeker obieqti igivea rac result
+                Assert.AreEqual(jobseeker, result);
+            }
+
+
+
+
+
+            //ar mushaobs es :((((((
+
+            [Test]
+            public void AddJobseeker_ShouldThrowException_WhenPersonIDIsNotUnique()
+            {
+
+                var jobseeker = new Persons
+                {
+                    PersonID = 1,
+                    FirstName = "Lika",
+                    LastName = "Gelovani",
+                    Address = "123 Qavtaradze st",
+                    City = "Tbilisi"
+                };
+
+                var hwDAL = A.Fake<IHelloWorldDAL>();
+
+               
+                //  1 unda daabrunos GetMaxPersonID metodma
+                A.CallTo(() => hwDAL.GetMaxPersonID()).Returns(1);
+
+                // hwDAL fake - tvis gamodzaxebit, GetJobseekerByID metodi abrunebs jobseeker obieqts roca gamodzaxeba xdeba jobseeker.PersonID parametrit
+
+               A.CallTo(() => hwDAL.GetJobseekerByID(jobseeker.PersonID)).Returns(jobseeker);
+
+
+                var hwBL = new HelloWorldBL(hwDAL);
+
+                //hwBL klasis AddJobseeker metodis gamodzaxeba xdeba jobseeker obieqtistvis romelic ukve arsebobs bazashi
+                //amitom Exception unda iyos
+                Assert.Throws<ArgumentException>(() => hwBL.AddJobseeker(jobseeker));
+
+            }
+
+
+
+        }
+
+
     }
 }
 

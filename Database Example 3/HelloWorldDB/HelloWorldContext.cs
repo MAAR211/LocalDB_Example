@@ -1,5 +1,6 @@
 ﻿using Database_Example_3.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace Database_Example_3.HelloWorldDB
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     => optionsBuilder.UseSqlServer("Server=.;Database=HelloWorld;persist security info=True;Integrated Security=True;TrustServerCertificate=True");
-        //("Server=192.168.0.10;Database=HRRAv3_ge-next_preprod;persist security info=True;user id=mzirakashvili;password=maR1Z!;TrustServerCertificate=True");
+       
 
 
 
@@ -46,6 +47,12 @@ namespace Database_Example_3.HelloWorldDB
             entity.Property(e => e.Address).IsRequired();
 
             entity.Property(e => e.City).IsRequired();
+
+
+          //  modelBuilder.Entity<Persons>()
+          //.Property(p => p.PersonID)
+          //.ValueGeneratedOnAdd()
+          //.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
         });
 

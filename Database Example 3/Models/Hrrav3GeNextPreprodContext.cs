@@ -570,7 +570,7 @@ public partial class Hrrav3GeNextPreprodContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=.;Database=HRRAv3_ge-next_preprod;persist security info=True;Integrated Security=True;TrustServerCertificate=True");
-    //("Server=192.168.0.10;Database=HRRAv3_ge-next_preprod;persist security info=True;user id=mzirakashvili;password=maR1Z!;TrustServerCertificate=True");
+    
 
 
 
